@@ -1,0 +1,14 @@
+all the things that need to be upgraded with this thing.
+
+1) remove csv line ounce mail is sent, (safer no double sent that way) on peut mettrre un tick
+3) figure out why the mail is purple
+4) put it on the drive and or git server of NDLM
+5) add modularity for example sending other kinds of joint files
+8) add a preview or at least a save to drive to check results of mails without actually sending them
+9) maybe add some checks to make sure they are sent to the right persons
+10) ajouter un cc pour fact check ce que tout le monde envoi
+11) ajouter un lien api maybe avec un truc similaire à dropcontact
+12) add cross compatibility ('/')
+11) add the option to pass the paths as arguments
+12) use the google API and not smtp
+13) run it on a server
