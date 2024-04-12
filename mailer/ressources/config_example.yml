@@ -1,0 +1,19 @@
+server:
+  host: smtp.gmail.com
+  port: 587
+  #configure this
+  sender: your_mail@example.com
+
+general:
+  #name of the files
+  signature: signature.html
+  csv: data.csv
+  pdf: DOSSIER_PRESENTATION.pdf
+  template: mail.txt
+  
+  #the name you want the pdf to have in the mail
+  pdf_name: dossier_de_presentation.pdf
+  
+  #the mails will be sent uniformly in [time - variance, time + variance] seconds
+  time_between_mails: 90
+  variance_between_mails: 50

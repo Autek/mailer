@@ -4,27 +4,20 @@ problèmes pourraient arriver.
 
 Coment l'utiliser:
 
-*si vous êtes sur windows il faudra probablement remplacer tous les '/' par des '\' sur les path en haut du code.
+1) faites une copie du fichier config_example.yml et nommez là config.yml
+essayez ensuite de la modifier à votre guise (c'est les settings)
 
-1) copiez votre signature ndlm en html source code via la version rendered en la copiant et en utilisant un site comme ???
-je n'ai pas trouvé celui que j'avais utilisé donc si vous en trouvez un ce serait nice de Edit le README :)
-mais si vous ne trouvez pas vous pouvez peut être la copier en faisant clique droit 
-sur la signature dans un mail -> inspecter l'élément et copier le html qui est highlight mais je garantis pas que ça marche
+2) copiez votre signature ndlm en html source code en cliquant sur la signature dans un mail -> inspecter l'élément et copier le html qui est highlight
+ensuite vous la copiez dans un fichier qui se trouve dans ressources et s'appelle signature.html par défaut
 
-ensuite vous la copiez dans le fichier qui se trouve dans ressources et s'appelle signature.html
+3) ajoutez/modifiez dans ressources le fichier qui s'appelle data.csv par défaut ou il faudra mettre vos contacts trouvez sou forme de csv
 
-2) ajoutez/modifiez dans ressources le fichier qui s'appelle data.csv ou il faudra mettre vos contacts trouvez sou forme de csv
+4) mettez votre pdf à mettre en pièce jointes dans ressources et vérifiez qu'il a le même nom que dans la feuille de config
 
-3) mettez votre pdf à mettre en pièce jointes dans ressources avec le nom DOSSIER_PRESENTATION.pdf pour l'instant le nom est hard coded
-si vous souhaitez ensuite que dans le mail il s'affiche avec un nom autre que dossier_de_présentation.pdf
-il faut modifier une de "constantes" en haut du code.
-
-4) regardez la template et construisez en une qui a du sens, je conseille vivement avant d'envoyer votre mail à quelq'un de 
+5) regardez la template et construisez en une qui a du sens, je conseille vivement avant d'envoyer votre mail à quelq'un de 
 vous l'envoyer à vous même et de vous mettre vous même en cc pour vérifier que tout marche
 
-5) depuis votre terminal placez vous dans le dossier "mailer" et lancez la commande "python3 main.py" ou "python main.py" si cela ne marche pas.
-Ensuite vous pourrez donner votre mail et mot de passe NDLM lorsque cela vous est demandé (rien n'est stocké)
-et ensuite si tout c'est bien passé les mails devraient s'envoyer à peu près toutes les 1min30 (modifiable dans les constantes du programme)
+6) tapez dans votre terminal la commande pip install pyyaml 
+depuis votre terminal placez vous dans le dossier "mailer" et lancez la commande "python3 main.py" ou "python main.py" si cela ne marche pas.
+Ensuite vous pourrez donner votre mail et mot de passe NDLM lorsque cela vous est demandé
 si vous souhaitez arréter l'envoi vous devez appuyer sur ctrl-c.
-
-j'espère ne pas avoir oublié trop de choses.

@@ -1,34 +1,40 @@
-from smtplib import SMTP
+from smtplib import SMTP, SMTPSenderRefused
 from email.message import EmailMessage
 from csv import DictReader
 from getpass import getpass
+from pathlib import Path
+import yaml
 import time
 import random
 import re
 
-PDF_PATH = "ressources/DOSSIER_PRESENTATION.pdf"
-PDF_NAME = "Dossier_de_présentation.pdf"
-TEMPLATE_PATH = "ressources/mail.txt"
-SIGNATURE_PATH = "ressources/signature.html"
-CSV_PATH = "ressources/data.csv"
-MEAN_WAIT_BETWEEN_EMAILS = 90 # in seconds
-MAX_SHIFT_FROM_MEAN_WAIT = 60 # wait will be taken at random between mean - max shift and mean + max shift
+RESSOURCES_PATH = Path.cwd() / 'ressources'
+CONFIG_PATH = RESSOURCES_PATH / "config.yml"
+
+def get_config(config_path):
+    """returns the configuration file in a dict"""
+    with open(config_path) as cfg:
+        config = yaml.safe_load(cfg)
+    return config
 
 
 def list_variables(string):
     """returns a list of all variables of the form '{var}' inside the string given"""
+
     regex = r'\{([^{}]*)\}'
     return set(re.findall(regex, string))
 
 def replace_placeholders(string, variables):
     """replaces all the variables in the string of the form '{var}' with 
     their values given in the dictionary 'variables'"""
+
     return string.format_map(variables)
 
 def fill_variables(string, variables):
     """replaces all the variables in the string by their values in the 'variables' dict
     accepts that the dict contains more variables and ensures that if there is one variable in the string
     and not in the dict then an error is thrown"""
+
     used_vars = list_variables(string)
     vars = {key: value for key, value in variables.items() if key in used_vars}
     return replace_placeholders(string, vars)
@@ -36,25 +42,14 @@ def fill_variables(string, variables):
 def fill_placeholders(email_parts, variables, expressions):
     """fills all the placeholders of the form {Placeholder} in all the email parts by their respective 
     variables or expressions"""
+
     expr = {k: eval((fill_variables(v, variables))) for k, v in expressions.items()}
     variables.update(expr)
     return {key: fill_variables(value, variables) for key, value in email_parts.items()}
 
-
-def gather_smtp_info():
-    """returns all the info necessary to launch an SMTP server and login in a tuple: server and login"""
-    server = {
-        'host'    : "smtp.gmail.com",
-        'port'      : 587
-        }
-    login = {
-        'user'  : input("your mail address: "),
-        'password'  : getpass("password: ")
-    }
-    return server, login
-
 def build_mail(pdf, pdf_name, signature, raw_template):
     """builds an Email object given a pdf, a signature and a template"""
+
     msg = EmailMessage()
     body = raw_template['Body']
 
@@ -71,6 +66,7 @@ def build_mail(pdf, pdf_name, signature, raw_template):
 
 def html_body(body, signature):
     """builds the html body for a mail and inserts the signature at the end of the mail"""
+
     html = f"""\
         <html>
             <head></head>
@@ -86,12 +82,14 @@ def html_body(body, signature):
 
 def read_file(path, mode='r'):
     """reads a file and outputs all it's content"""
+
     with open(path, mode) as file:
         return file.read()
 
 def parse_template(template_path):
     """given the path to a template parses it to build all the sections 
     that will be used to construct an Email, the placeholders are not filled"""
+
     email_parts = {
         'From'          : '',
         'To'            : '',
@@ -133,26 +131,33 @@ def parse_template(template_path):
 def get_csv_data(csv_path):
     """returns a list of dictionaries that contain a mapping from the category name to the value per line
     given the path to a csv"""
+
     with open(csv_path, 'r') as data:
         reader = DictReader(data)
         csv_data = [row for row in reader]
     return csv_data
 
 def main():
-    """builda emails from a template, a signature, a csv and a joint file and sends them 
+    """builds emails from a template, a signature, a csv and a joint file and sends them 
     to all the people on the CSV"""
-    email_parts, expressions = parse_template(TEMPLATE_PATH)
-    signature = read_file(SIGNATURE_PATH)
-    pdf = read_file(PDF_PATH, mode='rb')
-    csv_data = get_csv_data(CSV_PATH)
+    
+    config = get_config(CONFIG_PATH)
+    email_parts, expressions = parse_template(RESSOURCES_PATH / config['general']['template'])
+    signature = read_file(RESSOURCES_PATH / config['general']['signature'])
+    pdf = read_file(RESSOURCES_PATH / config['general']['pdf'], mode='rb')
+    pdf_name = config['general']['pdf_name'] 
+    csv_data = get_csv_data(RESSOURCES_PATH / config['general']['csv'])
+
+    server = {'host': config['server']['host'], 'port': config['server']['port']}
+    login = {'user': config['server']['sender'], 'password': getpass("password: ")}
+    print(server)
 
     emails = []
     for vars in csv_data:
         email_filled = fill_placeholders(email_parts, vars, expressions)
-        emails.append(build_mail(pdf, PDF_NAME, signature, email_filled))
+        emails.append(build_mail(pdf, pdf_name, signature, email_filled))
     
-    server, login = gather_smtp_info()
-    with SMTP(**server) as smtp:
+    with SMTP(config['server']['host'], config['server']['port']) as smtp:
         smtp.starttls()
         smtp.login(**login)
         i = 1
@@ -162,14 +167,22 @@ def main():
                 print()
                 print(f"{i} Emails sent")
                 i += 1
-                mean = MEAN_WAIT_BETWEEN_EMAILS
-                variance = MAX_SHIFT_FROM_MEAN_WAIT
+                mean = config['general']['time_between_mails']  
+                variance = config['general']['variance_between_mails']
                 sleep_time = random.uniform(mean - variance, mean + variance)
                 time.sleep(sleep_time)
-            except Exception as e:
-                print(f"could not send mail to {msg['To']}\n{e}")
+            except SMTPSenderRefused as e:
                 smtp.connect(**server)
-                smtp.starttls()
                 smtp.login(**login)
-
+                smtp.send_message(msg)
+                print()
+                print(f"{i} Emails sent")
+                i += 1
+                mean = config['general']['time_between_mails']  
+                variance = config['general']['variance_between_mails']
+                sleep_time = random.uniform(mean - variance, mean + variance)
+                time.sleep(sleep_time)
+            except e:
+                print("an unexpected error happened", e, sep='\n')
+                return
 main()

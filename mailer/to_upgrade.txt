@@ -1,13 +1,10 @@
 all the things that need to be upgraded with this thing.
 
 *) remove csv line ounce mail is sent, (safer no double sent that way) on peut mettrre un tick
-*) figure out why the mail is purple
 *) add modularity for example sending other kinds of joint files
 *) add a preview or at least a save to drive to check results of mails without actually sending them
 *) maybe add some checks to make sure they are sent to the right persons
 *) ajouter un cc pour fact check ce que tout le monde envoi
 *) ajouter un lien api maybe avec un truc similaire à dropcontact
-*) add cross compatibility ('/')
-*) add the option to pass the paths as arguments
 *) use the google API and not smtp
 *) run it on a server
