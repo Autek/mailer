@@ -67,12 +67,13 @@ def build_mail(pdf, pdf_name, signature, raw_template):
 def html_body(body, signature):
     """builds the html body for a mail and inserts the signature at the end of the mail"""
 
+    body = body.replace('\n', '<br>' * 2)
     html = f"""\
         <html>
             <head></head>
             <body>
                 <p style="font-family: Arial, sans-serif; font-size: 15px;">
-                    {body.replace('\n', '<br>' * 2)}
+                    {body}
                 </p>
             </body>
             <footer>{signature}</footer>
