@@ -1,0 +1,8 @@
+#ressources
+ressources/*
+
+#not the config example
+!ressources/config_example.yml
+
+#python thingy
+__pycache__/
