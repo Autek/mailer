@@ -1,0 +1,20 @@
+# this is the template, 
+# each line beginning with a "#" are ignored
+#
+<Expressions> Politesse; " Monsieur {lastName}" if "{Civility}" == "Mr" else " Madame {lastName}" if ("{Civility}" == "Mrs") else ""
+<Expressions> ici; "<a href=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ">ici</a>"
+#
+<From> John Doe <john.doe@gmail.com>
+#
+#<To> john.doe@gmail.com
+<To> {Email}
+#
+#<Cc> john.doe@gmail.com
+<Cc> Sponsoring <sponsoring@gmail.com>
+#
+<Subject> My cool event 2030
+#
+<Body>
+Bonjour{Politesse},
+bla bla bla il y a un lien {ici} bla bla bla merci à {Company} bla bla bla
+merci et à bientôt
